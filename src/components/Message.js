@@ -1,13 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { validateMessage } from '../utils/validation';
+import { doc, getDoc } from 'firebase/firestore';
 
 const Message = ({ message }) => {
   const [user] = useAuthState(auth);
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(message.text);
+  const [isOnline, setIsOnline] = useState(false);
+
+  useEffect(() => {
+    const checkUserStatus = async () => {
+      try {
+        const presenceDoc = await getDoc(doc(db, 'presence', message.uid));
+        setIsOnline(presenceDoc.exists());
+      } catch (error) {
+        setIsOnline(false);
+      }
+    };
+
+    checkUserStatus();
+  }, [message.uid]);
 
   const formatTime = (timestamp) => {
     if (!timestamp) return '';
@@ -16,10 +29,12 @@ const Message = ({ message }) => {
   };
 
   const handleEdit = async () => {
+    const { validateMessage } = await import('../utils/validation');
     const validation = validateMessage(editText);
     if (!validation.isValid) return;
 
     try {
+      const { updateDoc, doc } = await import('firebase/firestore');
       await updateDoc(doc(db, 'messages', message.id), {
         text: validation.sanitized,
         edited: true
@@ -33,6 +48,7 @@ const Message = ({ message }) => {
   const handleDelete = async () => {
     if (window.confirm('Delete this message?')) {
       try {
+        const { deleteDoc, doc } = await import('firebase/firestore');
         await deleteDoc(doc(db, 'messages', message.id));
       } catch (error) {
         console.error('Error deleting message:', error);
@@ -44,11 +60,14 @@ const Message = ({ message }) => {
 
   return (
     <div className={`chat-bubble ${isOwner ? 'right' : ''}`}>
-      <img
-        className="chat-bubble__left"
-        src={message.avatar}
-        alt="user avatar"
-      />
+      <div className="avatar-container">
+        <img
+          className="chat-bubble__left"
+          src={message.avatar}
+          alt="user avatar"
+        />
+        <div className={`status-dot ${isOnline ? 'online' : 'offline'}`}></div>
+      </div>
       <div className="chat-bubble__right">
         <p className="user-name">{message.name}</p>
         {isEditing ? (
