@@ -2,15 +2,20 @@ import React, { useState, useRef } from 'react';
 import { auth, db } from '../firebase';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { validateMessage } from '../utils/validation';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useTypingIndicator } from '../hooks/useTypingIndicator';
 
 const SendMessage = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [user] = useAuthState(auth);
   const scroll = useRef();
+  const { handleTyping, stopTyping } = useTypingIndicator(user);
 
   const sendMessage = async (event) => {
     event.preventDefault();
     setError('');
+    stopTyping();
     
     const validation = validateMessage(message);
     if (!validation.isValid) {
@@ -34,6 +39,15 @@ const SendMessage = () => {
     }
   };
 
+  const handleInputChange = (e) => {
+    setMessage(e.target.value);
+    if (e.target.value.trim()) {
+      handleTyping();
+    } else {
+      stopTyping();
+    }
+  };
+
   return (
     <form className="send-message" onSubmit={(event) => sendMessage(event)}>
       {error && <div className="error-message">{error}</div>}
@@ -47,7 +61,7 @@ const SendMessage = () => {
         className="form-input__input"
         placeholder="type message..."
         value={message}
-        onChange={(e) => setMessage(e.target.value)}
+        onChange={handleInputChange}
         maxLength={500}
       />
       <button type="submit">Send</button>

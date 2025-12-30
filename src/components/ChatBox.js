@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Message from './Message';
 import SendMessage from './SendMessage';
+import TypingIndicator from './TypingIndicator';
 import {
   query,
   collection,
@@ -40,6 +41,7 @@ const ChatBox = () => {
         {messages.map((message) => (
           <Message key={message.id} message={message} />
         ))}
+        <TypingIndicator />
       </div>
       <span ref={scroll}></span>
       <SendMessage scroll={scroll} />
