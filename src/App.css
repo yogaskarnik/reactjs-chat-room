@@ -183,3 +183,65 @@ input {
   margin-bottom: 20px;
   color: #ff6b6b;
 }
+
+.message-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.message-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.message-actions button {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 0.7rem;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.message-actions button:hover {
+  color: #1c2c4c;
+}
+
+.edit-message input {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin-bottom: 5px;
+}
+
+.edit-buttons {
+  display: flex;
+  gap: 5px;
+}
+
+.edit-buttons button {
+  padding: 3px 8px;
+  border: none;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.edit-buttons button:first-child {
+  background-color: #7cc5d9;
+  color: #1c2c4c;
+}
+
+.edit-buttons button:last-child {
+  background-color: #ccc;
+  color: #666;
+}
+
+.edited-indicator {
+  font-style: italic;
+  color: #666;
+  font-size: 0.8rem;
+}
