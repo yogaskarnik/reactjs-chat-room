@@ -1,31 +1,42 @@
 import React, { useState, useRef } from 'react';
 import { auth, db } from '../firebase';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { validateMessage } from '../utils/validation';
 
 const SendMessage = () => {
   const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const scroll = useRef();
 
   const sendMessage = async (event) => {
     event.preventDefault();
-    if (message.trim() === '') {
-      alert('enter valid message');
+    setError('');
+    
+    const validation = validateMessage(message);
+    if (!validation.isValid) {
+      setError(validation.error);
       return;
     }
-    const { uid, displayName, photoURL } = auth.currentUser;
-    await addDoc(collection(db, 'messages'), {
-      text: message,
-      name: displayName,
-      avatar: photoURL,
-      createdAt: serverTimestamp(),
-      uid,
-    });
-    setMessage('');
-    scroll.current.scrollIntoView({ behavior: 'smooth' });
+
+    try {
+      const { uid, displayName, photoURL } = auth.currentUser;
+      await addDoc(collection(db, 'messages'), {
+        text: validation.sanitized,
+        name: displayName,
+        avatar: photoURL,
+        createdAt: serverTimestamp(),
+        uid,
+      });
+      setMessage('');
+      scroll.current.scrollIntoView({ behavior: 'smooth' });
+    } catch (err) {
+      setError('Failed to send message. Please try again.');
+    }
   };
 
   return (
     <form className="send-message" onSubmit={(event) => sendMessage(event)}>
+      {error && <div className="error-message">{error}</div>}
       <label htmlFor="messageInput" hidden>
         Enter Message
       </label>
@@ -37,6 +48,7 @@ const SendMessage = () => {
         placeholder="type message..."
         value={message}
         onChange={(e) => setMessage(e.target.value)}
+        maxLength={500}
       />
       <button type="submit">Send</button>
     </form>

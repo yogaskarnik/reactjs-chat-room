@@ -159,3 +159,27 @@ input {
 .chat-bubble.right .message-timestamp {
   text-align: right;
 }
+
+.error-message {
+  position: absolute;
+  bottom: 70px;
+  left: 30px;
+  right: 30px;
+  background-color: #ff6b6b;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.error-boundary {
+  text-align: center;
+  padding: 50px;
+  color: #7cc5d9;
+}
+
+.error-boundary h2 {
+  margin-bottom: 20px;
+  color: #ff6b6b;
+}
