@@ -21,7 +21,7 @@ const SendMessage = () => {
       uid,
     });
     setMessage('');
-    scroll.current.sccrollIntoView({ behavior: 'smooth' });
+    scroll.current.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (

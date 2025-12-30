@@ -148,3 +148,14 @@ input {
   background-color: #7cc5d9;
   font-weight: 600;
 }
+
+.message-timestamp {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 4px;
+  display: block;
+}
+
+.chat-bubble.right .message-timestamp {
+  text-align: right;
+}
